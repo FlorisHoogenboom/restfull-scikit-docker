@@ -48,10 +48,5 @@ class Model(object):
             return 'not ok'
         return 'ok'
 
-    def has_predict(self):
-        model = self.get()
-        return self._is_valid_model(model, ['predict'])
-
-    def has_predict_proba(self):
-        model = self.get()
+    def has_predict_proba(self, model):
         return self._is_valid_model(model, ['predict_proba'])

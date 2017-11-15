@@ -1,9 +1,5 @@
 from scikit_rest_wrapper.models import Model, Schema
-from werkzeug.exceptions import (
-    NotImplemented,
-    InternalServerError,
-    BadRequest
-)
+from werkzeug.exceptions import NotImplemented
 from marshmallow import ValidationError
 import socket
 
@@ -42,19 +38,29 @@ def predict(data):
     model_schema = Schema().get()
     model = Model().get()
 
-    X = model_schema.load(data)
-    # y = list(model.predict(X))
-    #
-    # data['target'] = y[0]
+    X = model_schema.load(data).data
+    y = model.predict(X).tolist()
+
+    data['target'] = y[0]
 
     return data
 
 
 def predict_proba(data):
     """
+
     :param data: An datastructure serializable by the model schema
     :return: A copy of data with added the prediction
     """
-    raise NotImplemented('This controller is not yet implemented.')
+    model_schema = Schema().get()
+    model = Model().get()
+
+    if not Model().has_predict_proba(model):
+        raise NotImplemented('This controller is not yet implemented.')
+
+    X = model_schema.load(data).data
+    y = model.predict_proba(X).tolist()
+
+    data['target'] = y[0]
 
     return data
