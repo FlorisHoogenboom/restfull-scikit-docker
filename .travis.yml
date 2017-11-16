@@ -24,10 +24,10 @@ after_success:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
   # If the commit on master is tagged, not only create a latest release
   # but also include the tag as version.
-  - if [ "$TRAVIS_BRANCH" == "master" ] && [ -n "$TRAVIS_TAG" ]; then
+  - if [ -n "$TRAVIS_TAG" ]; then
     echo "This repo was tagged, building tagged versions";
-    docker tag build_artifact {$DOCKER_USERNAME}/restfull-scikit:python{$TRAVIS_PYTHON_VERSION}-{$TRAVIS_TAG};
-    docker push {$DOCKER_USERNAME}/restfull-scikit:python{$TRAVIS_PYTHON_VERSION}-{$TRAVIS_TAG};
+    docker tag build_artifact $DOCKER_USERNAME/restfull-scikit:python$TRAVIS_PYTHON_VERSION-$TRAVIS_TAG;
+    docker push $DOCKER_USERNAME/restfull-scikit:python$TRAVIS_PYTHON_VERSION-$TRAVIS_TAG;
     fi
   # For commits to the master branch we only create a latest version.
   - if [ "$TRAVIS_BRANCH" == "master" ]; then

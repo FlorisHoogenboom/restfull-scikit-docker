@@ -7,7 +7,8 @@ COPY ./setup.py /build/setup.py
 RUN pip install /build
 
 # Make application directories
-RUN mkdir /objects
+RUN mkdir /app/objects
+RUN mkdir /app/modules
 
 # Remove old entrypoint from the original container
 RUN rm /app/main.py

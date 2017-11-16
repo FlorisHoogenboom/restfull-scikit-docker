@@ -1,8 +1,6 @@
 # restfull-scikit-docker
-
-THIS REPOSITORY IS STILL WORK IN PPROGRESS. THE DOCKERIMAGE IS NOT YET AVAILABLE AT DOCKERHUB.
-A restfull api wrapper for scikit-learn models. This project provides a basic 
-Docker container that can be used as base for creating an restfull wrapper around
+ 
+This project provides a basic Docker container that can be used as base for creating an restfull wrapper around
 scikit-learn models. 
 
 ## This project
