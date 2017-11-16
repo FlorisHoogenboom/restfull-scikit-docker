@@ -1,0 +1,12 @@
+# Ignore IntelliJ config when feeding the deamon
+.idea/
+*.iml
+
+# Test code
+test/
+
+# Misc
+README.md
+LICENSE
+.gitignore
+.git/

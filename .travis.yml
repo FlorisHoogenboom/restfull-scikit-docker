@@ -1,0 +1,35 @@
+sudo: required
+language: python
+python:
+  - "3.6"
+  - "2.7"
+git:
+  depth: 1
+services:
+  - docker
+before_install:
+  # We need the latest docker features, hence update Docker before execution
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y install docker-ce
+install:
+  - pip install -e .
+script:
+  # Run tests
+  - python setup.py test
+  - docker build -t build_artifact .
+after_success:
+  # Login to the Dockerhub registry
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+  # If the commit on master is tagged, not only create a latest release
+  # but also include the tag as version.
+#  - if [ "$TRAVIS_BRANCH" == "master" ] && [ -n "$TRAVIS_TAG" ]; then
+#    docker tag build_artifact {$DOCKER_USERNAME}/restfull-scikit:python{$TRAVIS_PYTHON_VERSION}-{$TRAVIS_TAG};
+#    docker push {$DOCKER_USERNAME}/restfull-scikit:python{$TRAVIS_PYTHON_VERSION}-{$TRAVIS_TAG};
+#    fi
+  # For commits to the master branch we only create a latest version.
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker tag build_artifact $DOCKER_USERNAME/restfull-scikit:python$TRAVIS_PYTHON_VERSION-latest;
+    docker push $DOCKER_USERNAME/restfull-scikit:python$TRAVIS_PYTHON_VERSION-latest;
+    fi

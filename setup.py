@@ -15,5 +15,8 @@ setup(
         'scikit-learn',
         'marshmallow',
         'flask_json'
+    ],
+    test_requires = [
+        'nose'
     ]
 )
