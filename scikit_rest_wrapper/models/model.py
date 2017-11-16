@@ -41,8 +41,8 @@ class Model(object):
         try:
             model = self.get()
         except (
-            ModelNotPresent or
-            InvalidModel or
+            ModelNotPresent,
+            InvalidModel,
             ModuleNotFoundError
         ):
             return 'not ok'

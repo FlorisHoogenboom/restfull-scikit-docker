@@ -29,7 +29,7 @@ class Schema(object):
     def status(self):
         try:
             self.get()
-        except SchemaNotValid or SchemaNotPresent:
+        except (SchemaNotValid, SchemaNotPresent):
             return 'not ok'
         return 'ok'
 
