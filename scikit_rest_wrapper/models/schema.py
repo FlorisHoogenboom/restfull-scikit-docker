@@ -1,6 +1,6 @@
 import marshmallow
-from scikit_rest_wrapper.util import Loader
-from scikit_rest_wrapper.exceptions.http import SchemaNotValid, SchemaNotPresent
+from ..util import Loader
+from ..exceptions.http import SchemaNotValid, SchemaNotPresent
 
 class Schema(object):
     def __init__(self):

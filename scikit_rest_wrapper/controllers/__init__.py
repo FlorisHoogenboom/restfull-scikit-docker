@@ -1,6 +1,5 @@
-from scikit_rest_wrapper.models import Model, Schema
+from ..models import Model, Schema
 from werkzeug.exceptions import NotImplemented
-from marshmallow import ValidationError
 import socket
 
 

@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_json import as_json
 from flask import request
 from werkzeug.exceptions import BadRequest
-import controllers
+from .. import controllers
 
 # Initialize this router
 router = Blueprint('json', __name__)
@@ -19,7 +19,7 @@ def validate_and_parse_json(request):
         request.method in ['POST', 'PUT', 'UPDATE'] and not
         request.is_json
     ):
-        raise BadRequest('Request should be valid JSON')
+        raise BadRequest('Not a JSON.')
     return request.get_json()
 
 

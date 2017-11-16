@@ -1,4 +1,4 @@
-from scikit_rest_wrapper.config import DEBUG
+from ..config import DEBUG
 from flask_json import as_json
 from werkzeug.exceptions import HTTPException
 from marshmallow import ValidationError

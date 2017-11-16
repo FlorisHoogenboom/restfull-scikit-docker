@@ -1,5 +1,5 @@
-from scikit_rest_wrapper.util import Loader
-from scikit_rest_wrapper.exceptions.http import (
+from ..util import Loader
+from ..exceptions.http import (
     InvalidModel,
     ModelNotPresent,
     DependencyNotSatisfied
@@ -27,6 +27,7 @@ class Model(object):
         return model
 
     def _is_valid_model(self, model, attributes=[]):
+        # TODO: Bad, practice, change default argument.
         try:
             # TODO: it is possible a model is not fitted even if this passes
             validation.check_is_fitted(model, attributes)

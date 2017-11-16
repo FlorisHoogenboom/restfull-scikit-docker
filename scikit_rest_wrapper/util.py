@@ -1,5 +1,5 @@
 from sklearn.externals import joblib
-from scikit_rest_wrapper import config
+from . import config
 from os.path import join
 import sys
 import importlib
