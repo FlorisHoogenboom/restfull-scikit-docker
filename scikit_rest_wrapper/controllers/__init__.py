@@ -1,4 +1,5 @@
 from ..models import Model, Schema
+from ..util import Loader
 from werkzeug.exceptions import NotImplemented
 import socket
 
@@ -22,9 +23,12 @@ def status():
     Controller that returns some statistics about the app.
     :return: A dict having keys 'model', 'schema', 'hostname'
     """
+
     return {
         'schema': Schema().status(),
-        'model': Model().status(),
+        'model': Model.status(
+            Loader()
+        ),
         'hostname': socket.gethostname()
     }
 
@@ -35,10 +39,10 @@ def predict(data):
     :return: A copy of data with added the predicted class
     """
     model_schema = Schema().get()
-    model = Model().get()
+    model = Model(Loader())
 
     X = model_schema.load(data).data
-    y = model.predict(X).tolist()
+    y = model.predict(X)
 
     data['target'] = y[0]
 
@@ -52,13 +56,10 @@ def predict_proba(data):
     :return: A copy of data with added the prediction
     """
     model_schema = Schema().get()
-    model = Model().get()
-
-    if not Model().has_predict_proba(model):
-        raise NotImplemented('This controller is not yet implemented.')
+    model = Model(Loader())
 
     X = model_schema.load(data).data
-    y = model.predict_proba(X).tolist()
+    y = model.predict_proba(X)
 
     data['target'] = y[0]
 

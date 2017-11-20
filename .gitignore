@@ -106,3 +106,9 @@ venv.bak/
 # IntelliJ
 .idea/
 *.iml
+
+# Local development directories
+scikit_rest_wrapper/__main__.py
+modules/
+objects/
+

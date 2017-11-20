@@ -1,4 +1,3 @@
-from ..util import Loader
 from ..exceptions.http import (
     InvalidModel,
     ModelNotPresent,
@@ -9,12 +8,13 @@ from sklearn.exceptions import NotFittedError
 
 
 class Model(object):
-    def __init__(self):
-        pass
+    def __init__(self, loader):
+        self.loader = loader
+        self.model = self._get()
 
-    def get(self):
+    def _get(self):
         try:
-            model = Loader().get_object('model')
+            model = self.loader.get_object('model')
         except FileNotFoundError:
             raise ModelNotPresent()
         except ModuleNotFoundError as e:
@@ -22,7 +22,7 @@ class Model(object):
                 'Dependency {0} cannot be found.'.format(e.name)
             )
 
-        if not self.validate(model):
+        if not self._validate(model):
             raise InvalidModel()
         return model
 
@@ -30,24 +30,45 @@ class Model(object):
         # TODO: Bad, practice, change default argument.
         try:
             # TODO: it is possible a model is not fitted even if this passes
-            validation.check_is_fitted(model, attributes)
-        except NotFittedError or TypeError:
+            validation.check_is_fitted(
+                model,
+                attributes
+            )
+        except (NotFittedError, TypeError):
             return False
         return True
 
-    def validate(self, model):
+    def _validate(self, model):
         return self._is_valid_model(model)
 
-    def status(self):
+    def has_predict_proba(self):
+        return self._is_valid_model(
+            self.model,
+            ['predict_proba']
+        )
+
+    def predict(self, data):
+        return self.model\
+            .predict(data).tolist()
+
+    def predict_proba(self, data):
+        if not self.has_predict_proba():
+            raise NotImplemented('Model cannot be used for probabilistic predictions')
+
+        return self.model\
+            .predict_proba(data)\
+            .tolist()
+
+    @staticmethod
+    def status(loader):
         try:
-            model = self.get()
+            model = Model(loader)
         except (
             ModelNotPresent,
             InvalidModel,
-            ModuleNotFoundError
+            DependencyNotSatisfied
         ):
             return 'not ok'
         return 'ok'
 
-    def has_predict_proba(self, model):
-        return self._is_valid_model(model, ['predict_proba'])
+
