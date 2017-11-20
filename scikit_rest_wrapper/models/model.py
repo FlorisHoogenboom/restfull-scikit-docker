@@ -26,8 +26,11 @@ class Model(object):
             raise InvalidModel()
         return model
 
-    def _is_valid_model(self, model, attributes=[]):
-        # TODO: Bad, practice, change default argument.
+    def _is_valid_model(self, model, attributes=None):
+        # Assign default value for attributes
+        if attributes is None:
+            attributes = []
+
         try:
             # TODO: it is possible a model is not fitted even if this passes
             validation.check_is_fitted(
@@ -44,20 +47,33 @@ class Model(object):
     def has_predict_proba(self):
         return self._is_valid_model(
             self.model,
-            ['predict_proba']
+            ['predict_proba', 'classes_']
         )
 
     def predict(self, data):
         return self.model\
-            .predict(data).tolist()
+            .predict(data)\
+            .tolist()
 
     def predict_proba(self, data):
         if not self.has_predict_proba():
             raise NotImplemented('Model cannot be used for probabilistic predictions')
 
-        return self.model\
-            .predict_proba(data)\
-            .tolist()
+        predictions = self.model.predict_proba(data).tolist()
+        classes = self.model.classes_.tolist()
+
+        # We convert the model result to include
+        # the class names
+        class_probabilities = []
+        for prediction in predictions:
+            class_probabilities.append(
+                dict(zip(
+                    classes,
+                    prediction
+                ))
+            )
+
+        return class_probabilities
 
     @staticmethod
     def status(loader):
@@ -70,5 +86,3 @@ class Model(object):
         ):
             return 'not ok'
         return 'ok'
-
-
