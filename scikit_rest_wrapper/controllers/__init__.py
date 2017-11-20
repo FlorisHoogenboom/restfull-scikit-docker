@@ -1,6 +1,5 @@
 from ..models import Model, Schema
 from ..util import Loader
-from werkzeug.exceptions import NotImplemented
 import socket
 
 
@@ -10,12 +9,9 @@ def index():
     it does not exist.
     :return: result of the describe method of the model schema if it exists.
     """
-    model_schema = Schema().get()
+    model_schema = Schema(Loader())
 
-    if Schema().has_descr(model_schema):
-        return model_schema.describe()
-    else:
-        raise NotImplemented('This schema has no description implemented.')
+    return model_schema.describe()
 
 
 def status():
@@ -25,7 +21,9 @@ def status():
     """
 
     return {
-        'schema': Schema().status(),
+        'schema': Schema.status(
+            Loader()
+        ),
         'model': Model.status(
             Loader()
         ),
@@ -38,10 +36,10 @@ def predict(data):
     :param data: An datastructure serializable by the model schema
     :return: A copy of data with added the predicted class
     """
-    model_schema = Schema().get()
+    model_schema = Schema(Loader())
     model = Model(Loader())
 
-    X = model_schema.load(data).data
+    X = model_schema.load(data)
     y = model.predict(X)
 
     data['target'] = y[0]
@@ -55,10 +53,10 @@ def predict_proba(data):
     :param data: An datastructure serializable by the model schema
     :return: A copy of data with added the prediction
     """
-    model_schema = Schema().get()
+    model_schema = Schema(Loader())
     model = Model(Loader())
 
-    X = model_schema.load(data).data
+    X = model_schema.load(data)
     y = model.predict_proba(X)
 
     data['target'] = y[0]
