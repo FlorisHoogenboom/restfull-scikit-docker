@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/FlorisHoogenboom/restfull-scikit-docker.svg?branch=development)](https://travis-ci.org/FlorisHoogenboom/restfull-scikit-docker)
+
 # restfull-scikit-docker
  
 This project provides a basic Docker container that can be used as base for creating an restfull wrapper around scikit-learn models. 
