@@ -8,19 +8,19 @@ from .. import controllers
 router = Blueprint('json', __name__)
 
 
-def validate_and_parse_json(request):
+def validate_and_parse_json(req):
     """
     Function that validates for specific HTTP methods if the request
     passed is valid, and raises if it is not.
-    :param request: A Flask request object
+    :param req: A Flask request object
     :return: None
     """
     if (
-        request.method in ['POST', 'PUT', 'UPDATE'] and not
-        request.is_json
+        req.method in ['POST', 'PUT', 'UPDATE'] and not
+        req.is_json
     ):
         raise BadRequest('Not a JSON.')
-    return request.get_json()
+    return req.get_json()
 
 
 @router.before_request

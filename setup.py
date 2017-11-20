@@ -14,6 +14,8 @@ setup(
         'scipy',
         'scikit-learn',
         'marshmallow',
+        'flask',
+        'werkzeug',
         'flask_json'
     ],
     test_requires = [
