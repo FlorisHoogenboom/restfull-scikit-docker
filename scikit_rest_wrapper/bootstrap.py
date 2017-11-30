@@ -3,6 +3,8 @@ from flask import (
     request
 )
 from flask_json import FlaskJSON
+from .exceptions import configure_error_handlers
+from . import config
 
 
 # This is a backport from Flask 1.0, and it is used to help handle
@@ -36,6 +38,22 @@ class App(object):
         """
         pass
 
+    def _configure_cors(self, app):
+        """
+        Method to configure CORS headers for application
+        :param app: an application instance
+        :return: None
+        """
+        @app.after_request
+        def after_request(response):
+            response.headers['Access-Control-Allow-Origin'] = config.CORS
+            response.headers['Access-Control-Allow-Headers'] = config.CORS_HEADERS
+            return response
+
+    def _configure_error_handlers(self, app):
+        configure_error_handlers(app)
+
+
     def _register_app(self):
         """
         Method that registers a new app an corresonding json object
@@ -43,6 +61,13 @@ class App(object):
         """
         self.__class__.app = \
             Flask(__name__)
+
+        # Configure CORS headers for this app
+        self._configure_cors(self.app)
+
+        # Configure error handling for this app
+        self._configure_error_handlers(self.app)
+
         self._register_json()
 
     def _register_json(self):
@@ -71,3 +96,4 @@ class App(object):
         if self.json is None:
             self._register_json()
         return self.json
+

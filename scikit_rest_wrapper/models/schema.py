@@ -13,6 +13,7 @@ class Schema(object):
             schema = self.loader\
                 .get_module('schema')\
                 .ModelSchema(strict=True)
+        # TODO: Only catch if module not found is schema, otherwise raise again.
         except ModuleNotFoundError:
             raise SchemaNotPresent()
 
