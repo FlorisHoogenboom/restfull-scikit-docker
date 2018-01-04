@@ -9,6 +9,9 @@ import unittest
 from unittest.mock import MagicMock
 
 class MockModel(BaseEstimator):
+    """
+    Mock of a Scikit-Learn model.
+    """
     def fit(self, X, y):
         pass
 
@@ -17,7 +20,7 @@ class MockModel(BaseEstimator):
 
 class MockLoader(object):
     def get_object(self, identifier):
-        return None
+        return MockModel()
 
 class MockLoaderFileNotFound(object):
     def get_object(self, identifier):
@@ -65,5 +68,42 @@ class ModelGetterTest(unittest.TestCase):
             'test_module'
         ):
             model = Model(loader)
+
+    # TODO: Add test for model validation on load.
+
+class ModelGetStatus(unittest.TestCase):
+    def test_handles_correct_model(self):
+        loader = MockLoader()
+
+        self.assertEqual(
+            Model.status(loader),
+            'ok',
+            'Model status should be \'ok\' for correctly loaded model.'
+        )
+
+    def test_handles_failing_model(self):
+        # Model not found.
+        loader = MockLoaderFileNotFound()
+        self.assertEqual(
+            Model.status(loader),
+            'not ok',
+            'Model status should be \'not ok\' for failing model.'
+        )
+
+        # Model cannot be deserialized
+        loader = MockLoaderFileNotFound()
+        self.assertEqual(
+            Model.status(loader),
+            'not ok',
+            'Model status should be \'not ok\' for failing model.'
+        )
+
+
+
+class ModelPredictTest(unittest.TestCase):
+    """
+    Testcase for the models predict methods.
+    """
+    pass
 
 
