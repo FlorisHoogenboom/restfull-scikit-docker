@@ -57,7 +57,8 @@ class Model(object):
 
     def predict_proba(self, data):
         if not self.has_predict_proba():
-            raise NotImplemented('Model cannot be used for probabilistic predictions')
+            # TODO: Check how this is handled upstream?
+            raise NotImplementedError('Model cannot be used for probabilistic predictions')
 
         predictions = self.model.predict_proba(data).tolist()
         classes = self.model.classes_.tolist()

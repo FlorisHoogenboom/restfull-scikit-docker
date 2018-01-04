@@ -1,4 +1,5 @@
 from scikit_rest_wrapper.models import Model
+import numpy as np
 from sklearn.base import BaseEstimator
 from scikit_rest_wrapper.exceptions.http import (
     ModelNotPresent,
@@ -6,7 +7,8 @@ from scikit_rest_wrapper.exceptions.http import (
 )
 
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
+
 
 class MockModel(BaseEstimator):
     """
@@ -15,22 +17,28 @@ class MockModel(BaseEstimator):
     def fit(self, X, y):
         pass
 
-    def predict(self, X, y):
+    def predict(self, X):
         pass
 
+
 class MockLoader(object):
+    model = MockModel()
+
     def get_object(self, identifier):
-        return MockModel()
+        return self.model
+
 
 class MockLoaderFileNotFound(object):
     def get_object(self, identifier):
         raise FileNotFoundError()
+
 
 class MockLoaderModuleNotFound(object):
     def get_object(self, identifier):
         raise ModuleNotFoundError(
             name='test_module'
         )
+
 
 class ModelGetterTest(unittest.TestCase):
     """
@@ -71,6 +79,7 @@ class ModelGetterTest(unittest.TestCase):
 
     # TODO: Add test for model validation on load.
 
+
 class ModelGetStatus(unittest.TestCase):
     def test_handles_correct_model(self):
         loader = MockLoader()
@@ -99,11 +108,97 @@ class ModelGetStatus(unittest.TestCase):
         )
 
 
-
 class ModelPredictTest(unittest.TestCase):
     """
     Testcase for the models predict methods.
     """
-    pass
+    def test_predict(self):
+        """
+        Test predict calls the predict method of the model
+        """
+        loader = MockLoader()
+        model = Model(loader)
+        mock_model = loader.model
 
+        # Mock the actual models predict function to test if it
+        # is called correctly
+        actual_result = np.array([1,2,3])
+        mock_model.predict = MagicMock(
+            return_value = actual_result
+        )
+
+        # Call the Model model predict function with some data
+        data = np.array([
+            [1,2],
+            [4,6]
+        ])
+        result = model.predict(data)
+
+        mock_model.predict.assert_called_once_with(data)
+
+        self.assertListEqual(
+            list(actual_result),
+            result,
+            'The predict method should return a list with predictions.'
+        )
+
+
+class ModelPredictProbaTest(unittest.TestCase):
+    """
+    Test the behavior for models having predict proba
+    """
+    def setUp(self):
+
+        proba_model = MockModel()
+        proba_model.predict_proba = MagicMock(
+            return_value=np.array([
+                [0,1],
+                [0.223,0.777]
+            ])
+        )
+
+        proba_model.classes_ = np.array(['class_1', 'class_2'])
+
+        loader = MockLoader()
+        loader.model = proba_model
+
+        self.actual_model = proba_model
+        self.model = Model(loader)
+
+    def test_has_predict_proba(self):
+        """
+        Test if has_predict_proba correctly specifies if model has predict probability method
+        """
+        self.assertTrue(
+            self.model.has_predict_proba(),
+            "has_predict_proba should return true."
+        )
+
+        self.assertFalse(
+            Model(MockLoader()).has_predict_proba(),
+            "has_predict_proba should be false for model without predict_proba."
+        )
+
+    def test_raises_not_implemented(self):
+        """
+        Test if NotImplementedExcption is raised when called on model without predict_proba
+        """
+        model_without_predict_proba = Model(MockLoader())
+
+        with self.assertRaises(NotImplementedError):
+            model_without_predict_proba.predict_proba(
+                np.array([[1,2,3]])
+            )
+
+    def test_predict_proba(self):
+        data = np.array([
+            [1,2],
+            [3,4]
+        ])
+        result = self.model.predict_proba(data)
+
+        self.actual_model.predict_proba.assert_called_once_with(data)
+
+        self.assertEqual(result[0]['class_1'], 0)
+        self.assertEqual(result[0]['class_2'], 1)
 
