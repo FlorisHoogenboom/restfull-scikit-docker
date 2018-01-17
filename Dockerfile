@@ -20,5 +20,7 @@ COPY ./scikit_rest_wrapper /app/main
 RUN echo "logto = /var/log/uwsgi/%n.log" >> /app/uwsgi.ini
 RUN mkdir /var/log/uwsgi
 
+HEALTHCHECK CMD curl --fail http://localhost:80/json/status || exit 1
+
 EXPOSE 80
 EXPOSE 443

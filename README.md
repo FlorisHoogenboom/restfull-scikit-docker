@@ -80,3 +80,6 @@ Returns: (JSON) The same object as provided, with the key 'target' added. This k
 
 Description: Endpoint used to get probabilistic predictions.
 ```
+
+## Environment variables
+If the `DEBUG` environment variable is set to '1', errors will be reported through the API. Furthermore, the `CORS` and `CORS_HEADERS` can be used to specify the values of the `Access-Control-Allow-Origin` and `Access-Control-Allow-Headers` respectively.

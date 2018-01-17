@@ -19,16 +19,19 @@ def status():
     Controller that returns some statistics about the app.
     :return: A dict having keys 'model', 'schema', 'hostname'
     """
+    schema_status = Schema.status(Loader())
+    model_status = Model.status(Loader())
+
+    if (schema_status !='ok' or model_status != 'ok'):
+        status_code = 500
+    else:
+        status_code = 200
 
     return {
-        'schema': Schema.status(
-            Loader()
-        ),
-        'model': Model.status(
-            Loader()
-        ),
+        'schema': schema_status,
+        'model': model_status,
         'hostname': socket.gethostname()
-    }
+    }, status_code
 
 
 def predict(data):
