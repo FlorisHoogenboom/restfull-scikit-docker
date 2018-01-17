@@ -28,12 +28,12 @@ class Schema(object):
             marshmallow.Schema
         )
 
-    def has_descr(self):
+    def _has_descr(self):
         return hasattr(self.schema, 'describe')
 
     def describe(self):
-        if not self.has_descr():
-            NotImplemented('Schema has no description implemented')
+        if not self._has_descr():
+            raise NotImplementedError('Schema has no description implemented')
         return self.schema.describe()
 
     def load(self, data):
