@@ -13,7 +13,7 @@ class Schema(object):
             schema = self.loader\
                 .get_module('schema')\
                 .ModelSchema(strict=True)
-        except ModuleNotFoundError:
+        except (ModuleNotFoundError, AttributeError):
             raise SchemaNotPresent()
 
         if not self._validate(schema):
