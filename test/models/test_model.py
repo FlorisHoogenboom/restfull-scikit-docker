@@ -7,7 +7,7 @@ from scikit_rest_wrapper.exceptions.http import (
 )
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 
 class MockModel(BaseEstimator):
