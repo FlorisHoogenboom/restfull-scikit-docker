@@ -2,6 +2,7 @@ from ..config import DEBUG
 from flask_json import as_json
 from werkzeug.exceptions import HTTPException
 from marshmallow import ValidationError
+import logging
 
 
 def configure_error_handlers(app):
@@ -34,8 +35,12 @@ def configure_error_handlers(app):
                        'message': error.description
                    }, error.code
         elif not DEBUG:
+            logging.exception("An unhandled error occured")
             return {
                 'summary': "An internal error occurred"
             }, 500
         else:
-            raise error
+            logging.exception("An unhandled error occured")
+            return {
+                'summary': str(error)
+            }, 500

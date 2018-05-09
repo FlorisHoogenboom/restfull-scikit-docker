@@ -16,10 +16,6 @@ RUN rm /app/main.py
 # Copy the restfull wrapper
 COPY ./scikit_rest_wrapper /app/main
 
-# Setup error logging
-RUN echo "logto = /var/log/uwsgi/%n.log" >> /app/uwsgi.ini
-RUN mkdir /var/log/uwsgi
-
 HEALTHCHECK CMD curl --fail http://localhost:80/json/status || exit 1
 
 EXPOSE 80
