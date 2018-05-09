@@ -20,7 +20,7 @@ script:
   - docker build -t build_artifact .
 after_success:
   # Login to the Dockerhub registry
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+  - echo $DOCKER_PASSWORD | docker login -u "$DOCKER_USERNAME" --password-stdin;
   # If the commit on master is tagged, not only create a latest release
   # but also include the tag as version.
   - if [ -n "$TRAVIS_TAG" ]; then
