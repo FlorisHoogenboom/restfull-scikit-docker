@@ -2,7 +2,7 @@ import marshmallow
 from ..exceptions.http import SchemaNotValid, SchemaNotPresent
 
 
-class Schema(object):
+class MarshmallowSchema(object):
     def __init__(self, loader):
         self.loader = loader
         self.schema = self._get()
@@ -11,7 +11,7 @@ class Schema(object):
         # TODO: handle errors here
         try:
             schema = self.loader\
-                .get_module('schema')\
+                .get('schema')\
                 .ModelSchema(strict=True)
         # TODO: Only catch if module not found is schema, otherwise raise again.
         except (ModuleNotFoundError, AttributeError):
@@ -39,11 +39,3 @@ class Schema(object):
     def load(self, data):
         return self.schema.load(data).data
 
-    @staticmethod
-    def status(loader):
-        try:
-            # Try to instantiate the schema
-            Schema(loader)
-        except (SchemaNotValid, SchemaNotPresent):
-            return 'not ok'
-        return 'ok'

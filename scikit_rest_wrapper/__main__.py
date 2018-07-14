@@ -3,7 +3,6 @@ from scikit_rest_wrapper import config
 
 if __name__ == "__main__":
     # Change directory specification for development
-    config.MODULES_DIR = '../modules'
     config.OBJECTS_DIR = '../objects'
 
     # Start the app

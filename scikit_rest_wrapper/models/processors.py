@@ -7,14 +7,14 @@ from sklearn.utils import validation
 from sklearn.exceptions import NotFittedError
 
 
-class Model(object):
+class SklearnProcessor(object):
     def __init__(self, loader):
         self.loader = loader
         self.model = self._get()
 
     def _get(self):
         try:
-            model = self.loader.get_object('model')
+            model = self.loader.get('model')
         except FileNotFoundError:
             raise ModelNotPresent()
         except ModuleNotFoundError as e:
@@ -51,8 +51,8 @@ class Model(object):
         )
 
     def predict(self, data):
-        return self.model\
-            .predict(data)\
+        return self.model \
+            .predict(data) \
             .tolist()
 
     def predict_proba(self, data):
@@ -75,15 +75,3 @@ class Model(object):
             )
 
         return class_probabilities
-
-    @staticmethod
-    def status(loader):
-        try:
-            model = Model(loader)
-        except (
-            ModelNotPresent,
-            InvalidModel,
-            DependencyNotSatisfied
-        ):
-            return 'not ok'
-        return 'ok'

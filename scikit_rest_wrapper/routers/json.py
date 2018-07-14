@@ -3,9 +3,15 @@ from flask_json import as_json
 from flask import request
 from werkzeug.exceptions import BadRequest
 from .. import controllers
+from ..models import ModelFactory
 
 # Initialize this router
 router = Blueprint('json', __name__)
+
+# Create a controller object
+controller = controllers.MainController(
+    ModelFactory.build_model('sklearn')
+)
 
 
 def validate_and_parse_json(req):
@@ -36,22 +42,16 @@ def before_request():
 @router.route('/')
 @as_json
 def index():
-    return controllers.index()
-
-
-@router.route('/status')
-@as_json
-def status():
-    return controllers.status()
+    return controller.index()
 
 
 @router.route('/predict', methods=['POST'])
 @as_json
 def predict():
-    return controllers.predict(request.parsed)
+    return controller.predict(request.parsed)
 
 
 @router.route('/predict/proba', methods=['POST'])
 @as_json
 def predict_proba():
-    return controllers.predict_proba(request.parsed)
+    return controller.predict_proba(request.parsed)
