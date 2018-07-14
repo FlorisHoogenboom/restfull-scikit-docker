@@ -5,22 +5,17 @@ import sys
 import importlib
 
 
-class CachingLoader(object):
-    loaded_objects = {}
-
+class BaseLoader(object):
     def get(self, identifier):
-        if identifier not in self.loaded_objects.keys():
-            self.__class__.loaded_objects[identifier] = self._get(identifier)
-
-        return self.loaded_objects[identifier]
+        return self._get(identifier)
 
 
-class ModuleLoader(CachingLoader):
+class ModuleLoader(BaseLoader):
     def _get(self, identifier):
         sys.path.append(config.OBJECTS_DIR)
         return importlib.import_module(identifier)
 
 
-class SklearnJoblibLoader(CachingLoader):
+class SklearnJoblibLoader(BaseLoader):
     def _get(self, identifier):
         return joblib.load(join(config.OBJECTS_DIR, identifier))
