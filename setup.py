@@ -16,7 +16,9 @@ setup(
         'marshmallow',
         'flask',
         'werkzeug',
-        'flask_json'
+        'flask_json',
+        'keras',
+        'datauri'
     ],
     test_requires = [
         'nose'

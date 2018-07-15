@@ -1,4 +1,5 @@
 from sklearn.externals import joblib
+from keras.models import load_model
 from scikit_rest_wrapper import config
 from os.path import join
 import sys
@@ -19,3 +20,11 @@ class ModuleLoader(BaseLoader):
 class SklearnJoblibLoader(BaseLoader):
     def _get(self, identifier):
         return joblib.load(join(config.OBJECTS_DIR, identifier))
+
+
+class KerasLoader(BaseLoader):
+    def _get(self, identifier):
+        model = load_model(join(config.OBJECTS_DIR, identifier))
+        model._make_predict_function()
+
+        return model

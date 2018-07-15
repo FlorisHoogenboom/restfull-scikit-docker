@@ -1,33 +1,33 @@
 from ..exceptions.http import (
-    InvalidModel,
-    ModelNotPresent,
-    DependencyNotSatisfied
+    InvalidModel
 )
 from sklearn.utils import validation
 from sklearn.exceptions import NotFittedError
+import numpy as np
 
 
-class SklearnProcessor(object):
-    def __init__(self, loader):
-        self.loader = loader
-        self.model = self._get()
+class BaseProcessor(object):
+    def __init__(self, model):
+        self.model = model
 
-    def _get(self):
-        try:
-            model = self.loader.get('model')
-        except FileNotFoundError:
-            raise ModelNotPresent()
-        except ModuleNotFoundError as e:
-            raise DependencyNotSatisfied(
-                'Dependency {0} cannot be found.'.format(e.name)
-            )
+    @classmethod
+    def from_loader(cls, loader, identifier='model'):
+        model = loader.get(identifier)
+        return cls(model)
 
-        if not self._validate(model):
-            raise InvalidModel()
+
+class SklearnProcessor(BaseProcessor):
+    @classmethod
+    def from_loader(cls, loader, identifier='model'):
+        model = super(SklearnProcessor, cls)\
+            .from_loader(loader, identifier)
+
+        if not cls._is_valid_model(model.model):
+            raise InvalidModel('Model cannot be loaded')
         return model
 
-    def _is_valid_model(self, model, attributes=None):
-        # Assign default value for attributes
+    @staticmethod
+    def _is_valid_model(model, attributes=None):
         if attributes is None:
             attributes = []
 
@@ -40,9 +40,6 @@ class SklearnProcessor(object):
         except (NotFittedError, TypeError):
             return False
         return True
-
-    def _validate(self, model):
-        return self._is_valid_model(model)
 
     def has_predict_proba(self):
         return self._is_valid_model(
@@ -57,7 +54,6 @@ class SklearnProcessor(object):
 
     def predict_proba(self, data):
         if not self.has_predict_proba():
-            # TODO: Check how this is handled upstream?
             raise NotImplementedError('Model cannot be used for probabilistic predictions')
 
         predictions = self.model.predict_proba(data).tolist()
@@ -67,6 +63,31 @@ class SklearnProcessor(object):
         # the class names
         class_probabilities = []
         for prediction in predictions:
+            class_probabilities.append(
+                dict(zip(
+                    classes,
+                    prediction
+                ))
+            )
+
+        return class_probabilities
+
+
+class KerasClassifier(BaseProcessor):
+    def predict(self, data):
+        probas = self.model.predict(data)
+        pred_indices = np.argmax(probas, axis=1)
+        return pred_indices.tolist()
+
+    def predict_proba(self, data):
+        predictions = self.model.predict(data)
+        # for now we use default labels 1,2,3,4
+        classes = list(range(predictions.shape[-1]))
+
+        # We convert the model result to include
+        # the class names
+        class_probabilities = []
+        for prediction in predictions.tolist():
             class_probabilities.append(
                 dict(zip(
                     classes,
