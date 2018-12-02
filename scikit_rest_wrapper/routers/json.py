@@ -10,7 +10,7 @@ router = Blueprint('json', __name__)
 
 # Create a controller object
 controller = controllers.MainController(
-    ModelFactory.build_model('sklearn')
+    ModelFactory.build_model('keras')
 )
 
 

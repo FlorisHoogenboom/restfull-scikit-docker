@@ -1,0 +1,12 @@
+version: '3'
+services:
+  postcodemapper:
+    image: woningnet/postcode-mapper:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass
+    ports:
+      - 3306:3306
+    networks:
+      - slaagkans_net
+networks:
+  slaagkans_net:

@@ -32,10 +32,17 @@ class MarshmallowSchema(object):
         return hasattr(self.schema, 'describe')
 
     def describe(self):
-        if not self._has_descr():
-            raise NotImplementedError('Schema has no description implemented')
-        return self.schema.describe()
+        fields = self.schema.fields
+
+        description = {}
+        for field_name, field_def in fields.items():
+            field_type = field_def.__class__.__name__
+            field_descr = field_def.metadata.get(
+                'description', 'No description available'
+            )
+
+            description[field_name] = '(%s) %s' % (field_type, field_descr)
+        return description
 
     def load(self, data):
         return self.schema.load(data).data
-

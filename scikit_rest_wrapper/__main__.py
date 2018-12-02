@@ -6,4 +6,4 @@ if __name__ == "__main__":
     config.OBJECTS_DIR = '../objects'
 
     # Start the app
-    App().get_app().run(host='127.0.0.1', threaded=True, port=3000)
+    App().get_app().run(host='0.0.0.0', threaded=True, port=3000)
